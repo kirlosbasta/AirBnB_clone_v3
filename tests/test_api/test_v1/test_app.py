@@ -54,3 +54,10 @@ class TestApp(unittest.TestCase):
     def test_app_name(self):
         '''Name of app'''
         self.assertEqual(app.app.name, 'api.v1.app')
+
+    def test_404(self):
+        '''Test for 404 error'''
+        with app.app.test_client() as c:
+            resp = c.get('/api/v1/nop')
+            self.assertEqual(resp.status_code, 404)
+            self.assertEqual(resp.get_json(), {"error": "Not found"})
