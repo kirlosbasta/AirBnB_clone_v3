@@ -53,3 +53,15 @@ class TestIndex(unittest.TestCase):
             resp = c.get('/api/v1/status')
             self.assertEqual(resp.status_code, 200)
             self.assertEqual(resp.get_json(), {"status": "OK"})
+
+    def test_index_stats(self):
+        '''Test the stats route'''
+        with app.test_client() as c:
+            resp = c.get('/api/v1/stats')
+            self.assertEqual(resp.status_code, 200)
+            self.assertEqual(len(resp.get_json()), 6)
+            for key, value in resp.get_json().items():
+                self.assertIn(key, ["amenities", "cities", "places",
+                                    "reviews", "states", "users"])
+                self.assertIsInstance(value, int)
+                self.assertTrue(value >= 0)
