@@ -68,7 +68,7 @@ test_db_storage.py'])
                             "{:s} method needs a docstring".format(func[0]))
 
 
-@unittest.skipIf(models.storage_t != 'test', 'not testing db storage')
+@unittest.skipIf(models.storage_t != 'db', 'not testing db storage')
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
     @classmethod
@@ -77,38 +77,61 @@ class TestFileStorage(unittest.TestCase):
         cls.storage = DBStorage()
         cls.storage.reload()
 
+    def test_delete(self):
+        """Test that delete removes an object from the database"""
+        state = State(name="colorado")
+        self.storage.new(state)
+        self.storage.save()
+        key = "{}.{}".format(type(state).__name__, state.id)
+        self.assertIn(key, self.storage.all(State))
+        self.storage.delete(state)
+        self.assertNotIn(key, self.storage.all(State))
+
     def test_all_returns_dict(self):
-        """Test that all returns a dictionaty"""
-        self.assertIs(type(models.storage.all()), dict)
+        """Test that all returns a dictionary"""
+        all_objects = self.storage.all()
+        self.assertIsInstance(all_objects, dict)
 
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
+        all_objects = self.storage.all()
+        self.assertEqual(len(all_objects), self.storage.count())
 
     def test_new(self):
         """test that new adds an object to the database"""
+        state = State(name="colorado")
+        self.storage.new(state)
+        key = "{}.{}".format(type(state).__name__, state.id)
+        self.assertIn(key, self.storage.all(State))
 
     def test_save(self):
-        """Test that save properly saves objects to file.json"""
+        """Test that save properly saves objects to database"""
+        state = State(name="colorado")
+        self.storage.new(state)
+        self.storage.save()
+        self.storage.reload()
+        key = "{}.{}".format(type(state).__name__, state.id)
+        self.assertIn(key, self.storage.all(State))
 
     def test_get(self):
         '''Test that get retrive the correct object'''
-        user_1 = User()
-        user_2 = User()
-        self.storage.new(user_1)
-        self.storage.new(user_2)
-        self.assertIs(user_1, self.storage.get(User, user_1.id))
-        self.assertIs(user_2, self.storage.get(User, user_2.id))
+        State_1 = State(name="colorado")
+        State_2 = State(name="denver")
+        self.storage.new(State_1)
+        self.storage.new(State_2)
+        self.assertIs(State_1, self.storage.get(State, State_1.id))
+        self.assertIs(State_2, self.storage.get(State, State_2.id))
 
     def test_count(self):
         '''Test that count method count all the objects in for the class or
         all the objects'''
-        user_1 = User()
-        user_2 = User()
-        place_1 = Place()
-        users = self.storage.count(User)
+        State_1 = State(name="colorado")
+        State_2 = State(name="denver")
+        amenity_1 = Amenity(name="Coffe")
+        States = self.storage.count(State)
         all = self.storage.count()
-        self.storage.new(place_1)
-        self.storage.new(user_1)
-        self.storage.new(user_2)
-        self.assertEqual(users + 2, self.storage.count(User))
+        self.storage.new(amenity_1)
+        self.storage.new(State_1)
+        self.storage.new(State_2)
+        self.assertEqual(States + 2, self.storage.count(State))
         self.assertEqual(all + 3, self.storage.count())
