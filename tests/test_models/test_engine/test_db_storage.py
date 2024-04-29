@@ -68,21 +68,47 @@ test_db_storage.py'])
                             "{:s} method needs a docstring".format(func[0]))
 
 
+@unittest.skipIf(models.storage_t != 'test', 'not testing db storage')
 class TestFileStorage(unittest.TestCase):
     """Test the FileStorage class"""
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
+    @classmethod
+    def setUpClass(cls):
+        """Set up for the doc tests"""
+        cls.storage = DBStorage()
+        cls.storage.reload()
+
     def test_all_returns_dict(self):
         """Test that all returns a dictionaty"""
         self.assertIs(type(models.storage.all()), dict)
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_all_no_class(self):
         """Test that all returns all rows when no class is passed"""
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_new(self):
         """test that new adds an object to the database"""
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
     def test_save(self):
         """Test that save properly saves objects to file.json"""
+
+    def test_get(self):
+        '''Test that get retrive the correct object'''
+        user_1 = User()
+        user_2 = User()
+        self.storage.new(user_1)
+        self.storage.new(user_2)
+        self.assertIs(user_1, self.storage.get(User, user_1.id))
+        self.assertIs(user_2, self.storage.get(User, user_2.id))
+
+    def test_count(self):
+        '''Test that count method count all the objects in for the class or
+        all the objects'''
+        user_1 = User()
+        user_2 = User()
+        place_1 = Place()
+        users = self.storage.count(User)
+        all = self.storage.count()
+        self.storage.new(place_1)
+        self.storage.new(user_1)
+        self.storage.new(user_2)
+        self.assertEqual(users + 2, self.storage.count(User))
+        self.assertEqual(all + 3, self.storage.count())
