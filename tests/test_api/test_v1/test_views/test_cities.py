@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+'''Test Cities'''
 from api.v1.views import cities
 from api.v1.app import app
 import inspect

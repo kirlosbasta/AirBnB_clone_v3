@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-''' states module '''
+''' states model that handles all default RestFul API actions'''
 from api.v1.views import app_views
 from flask import jsonify, abort, request, make_response
 from models import storage
