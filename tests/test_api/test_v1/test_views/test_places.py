@@ -156,7 +156,7 @@ class TestPlaces(unittest.TestCase):
         with app.test_client() as c:
             resp = c.post('/api/v1/cities/{}/places'.format(self.brok.id))
             self.assertEqual(resp.status_code, 400)
-            self.assertEqual(resp.get_json(), 'Not a JSON')
+            self.assertEqual(resp.get_json(), {'error': 'Not a JSON'})
 
     def test_create_place_no_user_id(self):
         '''Test create place no user id'''
@@ -197,4 +197,4 @@ class TestPlaces(unittest.TestCase):
         with app.test_client() as c:
             resp = c.put('/api/v1/places/{}'.format(self.place_1.id))
             self.assertEqual(resp.status_code, 400)
-            self.assertEqual(resp.get_json(), 'Not a JSON')
+            self.assertEqual(resp.get_json(), {'error': 'Not a JSON'})
