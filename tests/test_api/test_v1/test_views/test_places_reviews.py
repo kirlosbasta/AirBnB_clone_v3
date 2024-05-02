@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 '''Test places reviews'''
 from api.v1.app import app
-from api.v1.views import place_reviews
+from api.v1.views import places_reviews
 from models import storage
 from models.city import City
 from models.review import Review
@@ -18,7 +18,7 @@ class TestPlacesReviewsDocs(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         '''Set up for the doc tests'''
-        cls.place_reviews_f = inspect.getmembers(place_reviews,
+        cls.place_reviews_f = inspect.getmembers(places_reviews,
                                                  inspect.isfunction)
 
     def test_pep8_conformance_places_reviews(self):
@@ -38,9 +38,9 @@ class TestPlacesReviewsDocs(unittest.TestCase):
 
     def test_places_reviews_module_docstring(self):
         '''Test for the places_reviews.py module docstring'''
-        self.assertIsNot(place_reviews.__doc__, None,
+        self.assertIsNot(places_reviews.__doc__, None,
                          "places_reviews.py needs a docstring")
-        self.assertTrue(len(place_reviews.__doc__) >= 1,
+        self.assertTrue(len(places_reviews.__doc__) >= 1,
                         "places_reviews.py needs a docstring")
 
     def test_places_reviews_func_docstrings(self):
